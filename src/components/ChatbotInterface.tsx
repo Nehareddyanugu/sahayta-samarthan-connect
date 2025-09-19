@@ -11,8 +11,35 @@ import {
   MessageCircle,
   Sparkles,
   Clock,
-  CheckCircle
+  CheckCircle,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
+
+// Type declarations for Web Speech API
+interface ISpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onresult: ((event: any) => void) | null;
+  onerror: ((event: Event) => void) | null;
+  onend: (() => void) | null;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: {
+      new (): ISpeechRecognition;
+    };
+    webkitSpeechRecognition: {
+      new (): ISpeechRecognition;
+    };
+  }
+}
 
 interface ChatbotInterfaceProps {
   selectedLanguage: string;
@@ -61,14 +88,14 @@ const sampleQuestions = {
 
 const botResponses = {
   English: {
-    greeting: "Hello! I'm your multilingual assistant for Rajasthan DTE. How can I help you today?",
+    greeting: "Hello! I'm CampusConnect.AI, your multilingual assistant for Rajasthan DTE. How can I help you today?",
     fee: "Here are the current fee structures: Engineering: ₹75,000/year, Diploma: ₹45,000/year, Management: ₹85,000/year. Fee payment can be done online or at designated centers.",
     scholarship: "Scholarships available: Merit-based (70%+ marks), Need-based (family income <₹2L), SC/ST quota (50% fee waiver). Application deadline: March 31st.",
     timetable: "Today's Schedule: 9:00 AM - Mathematics, 11:00 AM - Physics, 2:00 PM - Chemistry Lab, 4:00 PM - English. Check your student portal for room details.",
     documents: "Required documents: 12th marksheet, Transfer certificate, Character certificate, Category certificate (if applicable), Income certificate, Passport size photos (4), Aadhar card copy."
   },
   Hindi: {
-    greeting: "नमस्ते! मैं राजस्थान DTE के लिए आपका बहुभाषी सहायक हूं। आज मैं आपकी कैसे सहायता कर सकता हूं?",
+    greeting: "नमस्ते! मैं CampusConnect.AI हूं, राजस्थान DTE के लिए आपका बहुभाषी सहायक। आज मैं आपकी कैसे सहायता कर सकता हूं?",
     fee: "वर्तमान फीस संरचना: इंजीनियरिंग: ₹75,000/वर्ष, डिप्लोमा: ₹45,000/वर्ष, प्रबंधन: ₹85,000/वर्ष। फीस भुगतान ऑनलाइन या निर्दिष्ट केंद्रों पर किया जा सकता है।",
     scholarship: "उपलब्ध छात्रवृत्तियां: मेधा आधारित (70%+ अंक), आवश्यकता आधारित (पारिवारिक आय <₹2L), SC/ST कोटा (50% फीस माफी)। आवेदन की अंतिम तिथि: 31 मार्च।",
     timetable: "आज का कार्यक्रम: 9:00 AM - गणित, 11:00 AM - भौतिकी, 2:00 PM - रसायन प्रयोगशाला, 4:00 PM - अंग्रेजी। कमरे की जानकारी के लिए छात्र पोर्टल देखें।",
@@ -80,6 +107,9 @@ export const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({ selectedLang
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [recognition, setRecognition] = useState<ISpeechRecognition | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -103,6 +133,84 @@ export const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({ selectedLang
       language: selectedLanguage
     }]);
   }, [selectedLanguage]);
+
+  // Initialize Speech Recognition
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognitionInstance = new SpeechRecognitionClass();
+      
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = getLanguageCode(selectedLanguage);
+      
+      recognitionInstance.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInputValue(transcript);
+        setIsListening(false);
+      };
+      
+      recognitionInstance.onerror = () => {
+        setIsListening(false);
+      };
+      
+      recognitionInstance.onend = () => {
+        setIsListening(false);
+      };
+      
+      setRecognition(recognitionInstance);
+    }
+  }, [selectedLanguage]);
+
+  const getLanguageCode = (language: string): string => {
+    const languageCodes: Record<string, string> = {
+      English: 'en-US',
+      Hindi: 'hi-IN',
+      Urdu: 'ur-PK',
+      Telugu: 'te-IN',
+      Marathi: 'mr-IN'
+    };
+    return languageCodes[language] || 'en-US';
+  };
+
+  const speakText = (text: string) => {
+    if ('speechSynthesis' in window) {
+      // Stop any ongoing speech
+      speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = getLanguageCode(selectedLanguage);
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      
+      setIsSpeaking(true);
+      speechSynthesis.speak(utterance);
+    }
+  };
+
+  const toggleListening = () => {
+    if (!recognition) return;
+    
+    if (isListening) {
+      recognition.stop();
+      setIsListening(false);
+    } else {
+      recognition.lang = getLanguageCode(selectedLanguage);
+      recognition.start();
+      setIsListening(true);
+    }
+  };
+
+  const toggleSpeaking = () => {
+    if (isSpeaking) {
+      speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  };
 
   const generateBotResponse = (userMessage: string): string => {
     const responses = botResponses[selectedLanguage as keyof typeof botResponses] || botResponses.English;
@@ -141,9 +249,10 @@ export const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({ selectedLang
 
     // Simulate bot typing delay
     setTimeout(() => {
+      const responseText = generateBotResponse(inputValue);
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: generateBotResponse(inputValue),
+        text: responseText,
         sender: 'bot',
         timestamp: new Date(),
         language: selectedLanguage
@@ -151,6 +260,11 @@ export const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({ selectedLang
 
       setMessages(prev => [...prev, botResponse]);
       setIsTyping(false);
+      
+      // Auto-speak bot response
+      setTimeout(() => {
+        speakText(responseText);
+      }, 500);
     }, 1500);
   };
 
@@ -201,10 +315,22 @@ export const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({ selectedLang
                 <Bot className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-white">DTE Assistant</CardTitle>
+                <CardTitle className="text-white">CampusConnect.AI Assistant</CardTitle>
                 <div className="flex items-center space-x-2 mt-1">
                   <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-white/80">Online • Multilingual Support</span>
+                  <span className="text-xs text-white/80">Online • Voice & Multilingual Support</span>
+                  {isListening && (
+                    <>
+                      <Mic className="h-3 w-3 text-green-400" />
+                      <span className="text-xs text-green-400">Listening...</span>
+                    </>
+                  )}
+                  {isSpeaking && (
+                    <>
+                      <Volume2 className="h-3 w-3 text-blue-400" />
+                      <span className="text-xs text-blue-400">Speaking...</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -297,12 +423,33 @@ export const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({ selectedLang
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder={`Ask about fees, scholarships, timetables... (${selectedLanguage})`}
-                  className="pr-12 h-12 border-border/50 focus:border-primary"
+                  className="pr-20 h-12 border-border/50 focus:border-primary"
                 />
-                <Badge className="absolute right-3 top-3 bg-primary/10 text-primary text-xs px-2 py-1">
+                <Badge className="absolute right-16 top-3 bg-primary/10 text-primary text-xs px-2 py-1">
                   {selectedLanguage}
                 </Badge>
               </div>
+              
+              {/* Voice Controls */}
+              <Button
+                onClick={toggleListening}
+                disabled={isTyping}
+                variant="outline"
+                className={`h-12 px-4 ${isListening ? 'bg-primary text-white' : ''}`}
+                title="Voice Input"
+              >
+                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </Button>
+              
+              <Button
+                onClick={toggleSpeaking}
+                variant="outline"
+                className={`h-12 px-4 ${isSpeaking ? 'bg-accent-teal text-white' : ''}`}
+                title="Toggle Voice Response"
+              >
+                {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </Button>
+              
               <Button
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim() || isTyping}

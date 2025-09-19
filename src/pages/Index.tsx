@@ -90,8 +90,8 @@ const Index = () => {
             <div className="flex items-center space-x-3">
               <GraduationCap className="h-8 w-8 text-primary" />
               <div>
-                <h1 className="font-bold text-lg text-foreground">Language Agnostic Chatbot</h1>
-                <p className="text-xs text-muted-foreground">Government of Rajasthan | DTE</p>
+                <h1 className="font-bold text-lg text-foreground">CampusConnect.AI</h1>
+                <p className="text-xs text-muted-foreground">Language Agnostic Chat Bot</p>
               </div>
             </div>
             
@@ -127,13 +127,13 @@ const Index = () => {
                 Government of Rajasthan | Smart Education Initiative
               </Badge>
               <h1 className="text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-                Language Agnostic
+                CampusConnect
                 <span className="bg-gradient-to-r from-primary to-accent-teal bg-clip-text text-transparent block">
-                  Chatbot
+                  .AI
                 </span>
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                Smart Multilingual Support for Students. Reduce repetitive queries, provide instant answers in multiple languages, and enhance the learning experience with AI-powered assistance.
+                Language Agnostic Chat Bot - Smart Multilingual Support for Students. Reduce repetitive queries, provide instant answers in multiple languages, and enhance the learning experience with AI-powered voice assistance.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -331,8 +331,8 @@ const Index = () => {
             <div className="flex items-center justify-center space-x-3 mb-6">
               <GraduationCap className="h-8 w-8" />
               <div>
-                <h3 className="font-bold text-xl">Language Agnostic Chatbot</h3>
-                <p className="text-sm opacity-80">Smart Education Initiative</p>
+                <h3 className="font-bold text-xl">CampusConnect.AI</h3>
+                <p className="text-sm opacity-80">Language Agnostic Chat Bot</p>
               </div>
             </div>
             
