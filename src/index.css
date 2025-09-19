@@ -48,6 +48,21 @@
 
     --radius: 0.75rem;
 
+    /* Additional chart colors for pleasant visuals */
+    --chart-blue: 217 91% 60%;
+    --chart-cyan: 180 77% 64%;
+    --chart-violet: 262 83% 58%;
+    --chart-amber: 43 96% 56%;
+    --chart-emerald: 160 84% 39%;
+    --chart-rose: 351 83% 61%;
+    --chart-indigo: 239 84% 67%;
+    --chart-orange: 25 95% 53%;
+
+    /* Pleasant gradient combinations for charts */
+    --chart-gradient-1: linear-gradient(135deg, hsl(var(--chart-blue)), hsl(var(--chart-cyan)));
+    --chart-gradient-2: linear-gradient(135deg, hsl(var(--chart-violet)), hsl(var(--chart-amber)));
+    --chart-gradient-3: linear-gradient(135deg, hsl(var(--chart-emerald)), hsl(var(--chart-rose)));
+
     /* Custom gradients for modern look */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--background-secondary)) 100%);
@@ -109,6 +124,16 @@
     --border: 220 13% 20%;
     --input: 220 13% 16%;
     --ring: 217 91% 65%;
+
+    /* Dark chart colors with improved contrast */
+    --chart-blue: 217 91% 65%;
+    --chart-cyan: 180 77% 70%;
+    --chart-violet: 262 83% 65%;
+    --chart-amber: 43 96% 60%;
+    --chart-emerald: 160 84% 45%;
+    --chart-rose: 351 83% 68%;
+    --chart-indigo: 239 84% 72%;
+    --chart-orange: 25 95% 58%;
 
     /* Dark mode gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));

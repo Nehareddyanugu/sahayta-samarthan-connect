@@ -23,6 +23,7 @@ import dashboardImage from '@/assets/dashboard-preview.jpg';
 import { AuthModal } from '@/components/AuthModal';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { ChatbotInterface } from '@/components/ChatbotInterface';
+import { DashboardCharts } from '@/components/DashboardCharts';
 
 const Index = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -266,48 +267,22 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Dashboard Preview Section */}
+      {/* Interactive Dashboard Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="fade-in-left">
-              <Badge className="mb-6 bg-primary/10 text-primary border-primary/20">
-                Analytics Dashboard
-              </Badge>
-              <h2 className="text-4xl font-bold text-foreground mb-6">
-                Data-Driven Insights
-              </h2>
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                Monitor chatbot performance, track language usage, analyze query patterns, and measure response accuracy with our comprehensive analytics dashboard.
-              </p>
-              
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-primary rounded-full"></div>
-                  <span className="text-foreground">Real-time conversation monitoring</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-accent-teal rounded-full"></div>
-                  <span className="text-foreground">Language preference analytics</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-primary-glow rounded-full"></div>
-                  <span className="text-foreground">Response accuracy metrics</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="fade-in-right">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-teal/20 to-primary/20 blur-3xl"></div>
-                <img 
-                  src={dashboardImage} 
-                  alt="Analytics Dashboard Preview"
-                  className="relative rounded-2xl shadow-2xl w-full"
-                />
-              </div>
-            </div>
+          <div className="text-center mb-16 fade-in-up">
+            <Badge className="mb-6 bg-primary/10 text-primary border-primary/20">
+              Live Analytics Dashboard
+            </Badge>
+            <h2 className="text-4xl font-bold text-foreground mb-6">
+              Real-Time Data Insights
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Monitor chatbot performance, track language preferences, and analyze student engagement with our comprehensive analytics dashboard featuring beautiful, interactive charts.
+            </p>
           </div>
+
+          <DashboardCharts />
         </div>
       </section>
 
