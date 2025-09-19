@@ -69,5 +69,18 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@rasahq/rasa-webchat@1.0.1/lib/index.js"></script>
+<script>
+  WebChat.default.init({
+    selector: "#webchat",
+    initPayload: "/greet",
+    customData: {"language": "en"},
+    socketUrl: "http://<YOUR_RASA_SERVER_IP>:5005", // Replace with your Rasa server's public IP or domain
+    socketPath: "/socket.io/",
+    title: "Campus Chatbot",
+    subtitle: "Ask me about fees, scholarships, timetables!",
+  });
+</script>
+<div id="webchat"></div>
   </body>
 </html>
